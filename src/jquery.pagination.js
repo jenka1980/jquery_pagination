@@ -79,10 +79,14 @@
 		},
 		// Generate a range of numeric links 
 		appendRange:function(container, current_page, start, end, opts) {
-			var i;
+		    var i;
+		    
 			for(i=start; i<end; i++) {
-				this.createLink(i, current_page, opts).appendTo(container);
-			}
+                if ( !this.opts.rtl )
+                    this.createLink( i, current_page, opts ).appendTo( container );
+                else
+                    this.createLink( i, current_page, opts ).prependTo( container );
+            }
 		},
 		getLinks:function(current_page, eventHandler) {
 			var begin, end,
@@ -92,7 +96,7 @@
 			
 			// Generate "Previous"-Link
 			if(this.opts.prev_text && (current_page > 0 || this.opts.prev_show_always)){
-				fragment.append(this.createLink(current_page-1, current_page, {text:this.opts.prev_text, classes:"prev"}));
+			        fragment.append( this.createLink( current_page - 1, current_page, { text: this.opts.prev_text, classes: "prev" } ) );
 			}
 			// Generate starting points
 			if (interval.start > 0 && this.opts.num_edge_entries > 0)
@@ -101,7 +105,10 @@
 				this.appendRange(fragment, current_page, 0, end, {classes:'sp'});
 				if(this.opts.num_edge_entries < interval.start && this.opts.ellipse_text)
 				{
-					jQuery("<span>"+this.opts.ellipse_text+"</span>").appendTo(fragment);
+				    if ( !this.opts.rtl )
+				        jQuery( "<span>" + this.opts.ellipse_text + "</span>" ).appendTo( fragment );
+                    else
+                        jQuery( "<span>" + this.opts.ellipse_text + "</span>" ).prependTo( fragment );
 				}
 			}
 			// Generate interval links
@@ -111,7 +118,10 @@
 			{
 				if(np-this.opts.num_edge_entries > interval.end && this.opts.ellipse_text)
 				{
-					jQuery("<span>"+this.opts.ellipse_text+"</span>").appendTo(fragment);
+				    if ( !this.opts.rtl )
+				        jQuery( "<span>" + this.opts.ellipse_text + "</span>" ).appendTo( fragment );
+                    else
+                        jQuery( "<span>" + this.opts.ellipse_text + "</span>" ).prependTo( fragment );
 				}
 				begin = Math.max(np-this.opts.num_edge_entries, interval.end);
 				this.appendRange(fragment, current_page, begin, np, {classes:'ep'});
@@ -119,7 +129,10 @@
 			}
 			// Generate "Next"-Link
 			if(this.opts.next_text && (current_page < np-1 || this.opts.next_show_always)){
-				fragment.append(this.createLink(current_page+1, current_page, {text:this.opts.next_text, classes:"next"}));
+			    if ( !this.opts.rtl )
+			        fragment.append( this.createLink( current_page + 1, current_page, { text: this.opts.next_text, classes: "next" } ) );
+                else
+                    fragment.prepend( this.createLink( current_page + 1, current_page, { text: this.opts.next_text, classes: "next" } ) );
 			}
 			$('a', fragment).click(eventHandler);
 			return fragment;
@@ -142,7 +155,8 @@
 			prev_show_always:true,
 			next_show_always:true,
 			renderer:"defaultRenderer",
-			load_first_page:false,
+			load_first_page: false,
+            rtl: false,
 			callback:function(){return false;}
 		},opts||{});
 		
